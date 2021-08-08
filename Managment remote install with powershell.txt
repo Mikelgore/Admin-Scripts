@@ -1,0 +1,77 @@
+
+enable sc.exe start winrm
+wmic /NODE:"name-or-IP" process call create "c:\Windows\System32\sc.exe start winrm"
+
+First of all, let’s see how to get a list of installed programs on a remote computer:
+Get-WmiObject Win32_Product -ComputerName $computername | Select-Object -Property IdentifyingNumber, Name
+
+To find a specific program installed on a remote computer:
+Get-WmiObject Win32_Product -ComputerName $computername | Where-Object {$_.IdentifyingNumber -eq $number}
+
+Now, let’s uninstall that program.
+(Get-WmiObject Win32_Product -ComputerName $computername | Where-Object {$_.IdentifyingNumber -eq $number}).Uninstall()
+(Get-WmiObject Win32_Product -ComputerName $computername | Where-Object {$_.IdentifyingNumber -eq {2E64FC5C-9286-4A31-916B-0D8AE4B22954}}).Uninstall()
+(Get-WmiObject Win32_Product -ComputerName $computername | Where-Object {$_.IdentifyingNumber -eq {{2E64FC5C-9286-4A31-916B-0D8AE4B22954}}}).Uninstall()
+
+Uninstall Cylance Locally
+(Get-WmiObject Win32_Product | Where-Object {$_.IdentifyingNumber -eq {{2E64FC5C-9286-4A31-916B-0D8AE4B22954}}}).Uninstall()
+
+
+To install on a remote computer with PS, If the install package is already on the remote computer,
+
+Invoke-Command -ComputerName $computer -ScriptBlock {
+  Start-Process 'c:\temp\setup.exe' -ArgumentList '/slient' -Wait
+}
+
+
+
+
+But if not, you will need to copy the package over first and then run the installation process.
+
+$computer = 'computer1'
+$session = New-PSSession -ComputerName $computer
+Copy-Item -Path '\server\software\sophosetup.exe' -ToSession $session -Destination 'c:\windows\temp\sophossetup.exe' -Force
+Invoke-Command -Session $session -ScriptBlock   {
+   Start-Process 'c:\windows\temp\sophosSetup.exe' -ArgumentList '--quiet' -Wait
+   Move-Item -Path 'c:\windows\temp\sophossetup.exe'    
+} 
+
+
+
+
+$computer = 'J6-BVDMVD2'
+$session = New-PSSession -ComputerName $computer
+Invoke-Command -Session $session -ScriptBlock   {
+$cy = cmd /c dir /s /b C:\Windows\ccmcache\CylanceProtect_x64.msi
+Copy-Item $cy
+(Get-WmiObject Win32_Product | Where-Object {$_.IdentifyingNumber -eq {{2E64FC5C-9286-4A31-916B-0D8AE4B22954}}}).Uninstall()
+msiexec /i CylanceProtect_x64.msi /qn PIDKEY=rtXGiLiYzDC6qQ27eB26TP40 LAUNCHAPP=1 InstallRegistrationURL=https://cylanceonprem.hq.jdi.army.mil InstallTrustedSuffix=hq.jdi.army.mil InstallInfinityURL=https://cylanceonprem.hq.jdi.army.mil
+}
+
+
+$computer = 'J6-5Q87PL2'
+$session = New-PSSession -ComputerName $computer
+Copy-Item -Path '\\jdi-vserver1\Public\J6\J6 - IA\CND\Cylance\Agent Upgrade\v2_0_1540_11\CylanceProtect_x64.msi' -ToSession $session -Destination 'c:\windows\temp\CylanceProtect_x64.msi' -Force
+
+Invoke-Command -Session $session -ScriptBlock   {
+   Start-Process 'c:\windows\temp\CylanceProtect_x64.msi' -ArgumentList PIDKEY=rtXGiLiYzDC6qQ27eB26TP40 LAUNCHAPP=1 InstallRegistrationURL=https://cylanceonprem.hq.jdi.army.mil InstallTrustedSuffix=hq.jdi.army.mil'--quiet' -Wait
+   Move-Item -Path 'c:\windows\temp\CylanceProtect_x64.msi'    
+}
+
+
+(Get-WmiObject Win32_Product | Where-Object {$_.IdentifyingNumber -eq {2E64FC5C-9286-4A31-916B-0D8AE4B22954}}).Uninstall()
+
+$computer = 'N001SLXDB'
+$session = New-PSSession -ComputerName $computer
+Copy-Item -Path '\\jdi-vserver1\Public\J6\J6 - IA\CND\Cylance\Agent Upgrade\v2_0_1540_11\CylanceProtect_x64.msi' -ToSession $session -Destination 'c:\windows\temp\CylanceProtect_x64.msi' -Force 
+Invoke-Command -Session $session -ScriptBlock { Start-Process 'c:\windows\temp\CylanceProtect_x64.msi' -ArgumentList "PIDKEY=rtXGiLiYzDC6qQ27eB26TP40 LAUNCHAPP=1 InstallRegistrationURL=https://cylanceonprem.hq.jdi.army.mil InstallTrustedSuffix=hq.jdi.army.mil"  }
+
+$computer = 'J6-5Q87PL2'
+$session = New-PSSession -ComputerName $computer
+Copy-Item -Path '\\jdi-vserver1\Public\J6\J6 - IA\McAfee Agent\Prod\framePkg.exe' -ToSession $session -Destination 'c:\windows\temp\framePkg.exe' -Force
+Invoke-Command -Session $session -ScriptBlock { Start-Process 'c:\windows\temp\framePkg.exe' }
+
+
+(Get-WmiObject Win32_Product | Where-Object {$_.IdentifyingNumber -eq {{2E64FC5C-9286-4A31-916B-0D8AE4B22954}}}).Uninstall()
+
+msiexec /i "\\jdi-vserver1\Public\J6\J6 - IA\CND\Cylance\Agent Upgrade\v2_0_1540_11\CylanceProtect_x64.msi" PIDKEY=rtXGiLiYzDC6qQ27eB26TP40 LAUNCHAPP=1 InstallRegistrationURL=https://cylanceonprem.hq.jdi.army.mil InstallTrustedSuffix=hq.jdi.army.mil

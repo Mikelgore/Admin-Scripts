@@ -1,0 +1,27 @@
+
+Problem? You need to remove software from a remote machine and cannot get a desktop on the machine.
+
+Solution
+
+1.Use psexec from the PSTools suite to open a cmd session on the remote machine:
+psexec.exe \\remote-machine cmd
+
+2.Use wmic to find the exact name of the software:
+
+"wmic product get name"  or  from another machine with cmd open as admin "wmic /NODE:"machine-name" product get" <cleaner
+
+3.Once you know the name of the software, you can remove it with wmic as well:
+
+wmic product where name="application name" call uninstall
+
+If you know the name of the product you can just run with it.
+
+wmic product where name="McAfee VirusScan Enterprise" call uninstall
+
+wmic product where name="McAfee DLP Endpoint" call uninstall
+
+wmic product where name="SiteAdvisor Enterprise Plus" call uninstall
+
+c:\Program Files\McAfee\Common Framework\FrmInst.exe /forceuninstall
+
+REG QUERY [\\Machine\]FullKey SystemCore\VSCore\Email Scanner\Outlook\OnDelivery\ActionOptions

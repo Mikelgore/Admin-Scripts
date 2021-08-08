@@ -1,0 +1,1 @@
+for /F "tokens=*" %A in (awake8.txt) do reg delete \\%A\HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\C5CF46E2682913A419B6D0A84E2B9245\ /f

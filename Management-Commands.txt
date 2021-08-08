@@ -1,0 +1,258 @@
+
+FOR /L %i IN (1,1,254) DO ping -n 1 192.168.4.%i | FIND /i "Bytes=">>ipaddresses.txt
+FOR /L %i IN (1,1,254) DO ping -n 1 -a 192.168.4.%i | FIND /i "TTL=128">>ipaddresses.txt
+
+wmic /NODE:"*windows-machines.txt" bios get serialnumber >>Dell-Serial-Numbers.txt
+
+FOR /F "Tokens=*" %L IN (Computers.TXT) DO WMIC /node:%L process call create "cmd.exe /c GPUpdate.exe"
+FOR /F "Tokens=*" %L IN (Computers.TXT) DO WMIC /node:%L process call create "winrm.cmd quickconfig -q"
+
+
+msiexec.exe /i SpiceworksAgentShell_Collection_Agent.msi /qn SITE_KEY="980y2_aOepk0Jbu8OO-I"
+
+cmd /c msiexec.exe /i "\\fecccompulink\Store\SharedDocs\Antivirus\SpiceWorks\SpiceworksAgentShell_Collection_Agent.msi" /qn SITE_KEY="980y2_aOepk0Jbu8OO-I"
+
+Invoke-Command -ComputerName (Get-Content windows.txt) -FilePath C:\Users\mikel.gore\Downloads\Spiceworks\install-SpiceworksCollectionAgent.ps1
+
+psexec \\ped-dr-01 -s winrm.cmd quickconfig -q
+for /F "tokens=*" %A in (windows.txt) do ping -n 1 -a %A |find "TTL=128" && echo %A>> awake2.txt
+for /F "tokens=*" %A in (C:\Users\mikel.gore\Documents\machines2.txt) do psexec \\%A -s winrm.cmd quickconfig -q
+psexec @C:\Users\mikel.gore\Documents\machines2.txt -s winrm.cmd quickconfig -q
+
+
+$a = 5
+$b = 6
+$c = 7
+$d = $a,$b,$c
+Foreach ($i in $d)
+{
+ $i + 5
+}
+
+# $computer = ''
+
+$file = '\\fecccompulink\Store\SharedDocs\Antivirus\SpiceWorks\SpiceworksAgentShell_Collection_Agent.msi'
+$M = (get-content C:\Users\mikel.gore\Documents\machines2.txt)
+
+Copy-Item -Path $file -Destination "\\$M\c$\windows\temp\installer.msi"
+Invoke-Command -ComputerName $M -ScriptBlock {
+    cmd /c msiexec.exe /i c:\windows\temp\installer.msi /qn SITE_KEY="980y2_aOepk0Jbu8OO-I"
+	}
+
+$M(get-content C:\Users\mikel.gore\Documents\machines2.txt)
+
+
+FOR /L %i IN (1,1,254) DO ping -n 1 192.168.4.%i | FIND /i "Bytes=">>ipaddresses.txt
+FOR /L %i IN (1,1,254) DO ping -n 1 -a 192.168.4.%i | FIND /i "TTL=128">>ipaddresses.txt
+
+msiexec.exe /i SpiceworksAgentShell_Collection_Agent.msi /qn SITE_KEY="980y2_aOepk0Jbu8OO-I"
+
+cmd /c msiexec.exe /i "\\fecccompulink\Store\SharedDocs\Antivirus\SpiceWorks\SpiceworksAgentShell_Collection_Agent.msi" /qn SITE_KEY="980y2_aOepk0Jbu8OO-I"
+
+Invoke-Command -ComputerName (Get-Content windows.txt) -FilePath C:\Users\mikel.gore\Downloads\Spiceworks\install-SpiceworksCollectionAgent.ps1
+
+for /F "tokens=*" %A in (windows.txt) do ping -n 1 -a %A |find "TTL=128" && echo %A>> awake2.txt
+
+
+$file = '\\fecccompulink\Store\SharedDocs\Antivirus\SpiceWorks\SpiceworksAgentShell_Collection_Agent.msi'
+$computer = ''
+
+Copy-Item -Path $file -Destination "\\$computername\c$\windows\temp\installer.msi"
+Invoke-Command -ComputerName $computer -ScriptBlock {
+    cmd /c msiexec.exe /i c:\windows\temp\Sinstaller.msi /qn SITE_KEY="980y2_aOepk0Jbu8OO-I"
+}
+
+$M = (get-content C:\computer.txt)
+
+
+Get-CimInstance -ClassName Win32_BIOS
+http://www.informit.com/articles/article.aspx?p=2477536
+
+
+PowerShell has a command that will do all this for you.  The command is simply "Get-FileHash":
+Get-FileHash [-Path] <String[]> [-Algorithm <String>] | Format-List
+Where: -Path is simply the path of the file for which you want to generate a hash
+       -Algorithm is the specific hash you want to generate (defaults to SHA256), possible parameters for this option are:
+        SHA1
+        SHA256
+        SHA384
+        SHA512
+        MACTripleDES
+        MD5
+        RIPEMD160
+
+
+Disable McAfee Solidcore from the Command Line
+
+1) Open an elevated Command Prompt
+2) Type sadmin recover
+3) When prompted enter the "ePO Console" password
+[The default password is "solidcore" - without the quotes, unless we have changed it]
+4) Type sadmin disable
+5) Type sadmin status
+	This should return two results:
+	McAfee Solidifier: Enabled
+	McAfee Solidifier on reboot: Disabled
+6) Reboot the machine, and Solidifier will now be disabled
+
+
+There are times when it is impossible to remove the McAfee agent from a machine when it is in "Managed Mode". 
+You'll attempt to, but the appropriate error message will be displayed.
+
+To get around this issue, the agent needs to be uninstalled via the trusty Command Line:
+
+1) Open a command prompt
+2) Change directory to the McAfee Framework directory:
+   a) For 32-bit systems: cd "C:\Program Files (x86)\McAfee\Common Framework\"
+   b) For 64-bit systems: cd "C:\Program Files\McAfee\Agent\x86\"
+3) Execute the Following Command: frminst.exe /remove=agent 
+
+In most instances, this uninstalls the McAfee Agent.  However, at the very least, it will place the Agent in 
+"Unmanaged Mode", 
+meaning it can now be uninstalled via "Control Panel" / "Programs and Features".
+
+If all else fails, and I do mean ALL ELSE, you can follow the steps in this McAfee KB Article:
+https://kc.mcafee.com/corporate/index?page=content&id=KB75902
+
+
+Powershell Remoting
+
+Enable-PSRemoting
+
+Invoke-Command -ComputerName Client001 -Command {\\remote-share\Softwares\software\CCMSetup.exe}
+
+
+
+
+\\computerName\c$\Program Files\McAfee\Agent\x86\FrmInst.exe /forceuninstall
+
+
+
+
+
+LINUX Commands
+
+You can use the lsof commands to find all the files that are deleted but still hold disk space. This is very useful when your disk or filesystem is filling up and you are looking for files and directories to delete to free some space.  Suppose /app is your file system then
+
+$ lsof /app | grep deleted
+
+will print all deleted files which are claiming disk space. You can just kill the process which is holding the reference of those files and get back your disk space. The command will also print the process id to help you kill the process. You can just kill command for that.
+
+1) How to list all open files by all process
+
+$ lsof
+
+Simply running lsof without any argument print all opened file and process. This is not particularly useful but a good starting point.
+
+2) How to list all process which has opened a file
+
+$ lsof /home/someuser/somefile
+
+will list all the process which has opened this file. you can see the command, PID, user, and full file path to find out the process.
+
+3) How to find all opened files by a user 
+You can use lsof -u command to list all opened file by a user as shown below
+
+$ lsof -u username
+
+You can provide comma separated list of users to find a list of open files by multiple users as shown below
+
+$ lsof -u user1,user2,user3
+
+You can do the same by providing -u option multiple times :
+
+$ lsof -u user1 -u user2
+
+If you are struggling to remember these lsof command options, here is a nice diagram from Julia Evans which will help them to remember.
+
+4) How to list all files opened by a particular command
+You can use lsof -c option to provide the name of the command and list down all the files opened by that command, for example, to list all file opened by java process, you can do this :
+
+$ lsof -c java
+
+This is better than using grep for filtering, as instead of writing lsof | grep java, you can just write lsof -c java.
+
+You can also find all files opened by apache which runs as httpd as shown below :
+
+lsof -c httpd
+
+Just like multiple users, you can also combine multiple processes name to list down files hold by them e.g.
+
+$ lsof -c java -c httpd
+
+5) How to find all files opened by a particular user and command
+You can combine users and process name in one lsof command to list down all the files opened by a particular process or a particular user as shown below :
+
+$ lsof -u root -c java
+
+This will list all files opened or hold by root user + all files opened by the java process.
+
+6) How to find files opened by USER and process
+Like the previous option, you can also combine user and process by using lsof option '-a'. This is like the AND logical operator and will only list files, which matches both options e.g.
+
+$ lsof -a -u root - c java
+
+will only list files opened by java process which is running under root user
+
+
+7) lsof with the negation operator
+Similar to AND and OR operator used earlier, you can also use negation operator with lsof command e.g.
+
+$ lsof - u ^root
+
+will list all files opened by all user except root
+
+
+8) How to list all open files by a process using PID
+As I told, I mostly use the lsof command to find all files opened by a particular process. In order to do that sometimes, I usually use grep command to filter lsof output by PID, but you can also use lsof -p option to do the same, as shown below :
+
+$ lsof -p 17783
+
+will list all files opened by the process with PID 17783.
+
+List users and processes, you can also supply multiple PIDs to find files opened by multiple processes e.g. :
+
+$ lsof -p 17783,17754,17984
+
+will list all files opened by the process with PIDs 17783,17754,17984.
+
+
+9) How to list all network connection
+You can use lsof - i option to find all open network connections which are nothing but open internet sockets (TCP and UDP), for example
+
+$ lsof -i 
+
+You can further find all TPC connection by using the tcp option as shown below :
+
+$ lsof -i tcp
+
+Similarly, to find all open udp connections you can do :
+
+$ lsof -i udp
+
+will list all process with open internet sockets.
+
+10) How to find which process is using a port 
+Though you can do this with netstat command as well, you would be surprised to know that you can find all process using a particular TCP or UDP port using the lsof command. For example :
+
+$ lsof -i :19500 
+
+will find the process which is using TCP or UDP port 19500
+
+You can even names defined in etc/services instead of port number e.g.
+
+$ lsof -i :smtp
+
+will print process using the SMTP port.
+
+You can also combine TCP and UDP with a port to do more specific search e.g. to find all process in UNIX which uses TCP port number 19600 you can do the following :
+
+$ lsof -i tcp:19600 
+
+and to find all process which is using UDP port 17600 you can use
+
+$ lsof -i udp:17600
+
+
+
+Read more: https://javarevisited.blogspot.com/2016/06/10-example-of-lsof-command-in-unix-linux.html#ixzz5yN7qyNYd
